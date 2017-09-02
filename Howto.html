@@ -1,0 +1,113 @@
+<html>
+<head>
+  <title="Howto"></title>
+  <link rel="stylesheet" type="text/css" href="Site.css">
+  <link rel="stylesheet" href="./src/prettify.css">
+
+</head>
+<body>
+<p id="obj">Learn how to use Depict.js </p>
+
+<hr></hr>
+<p id="e1">Depict.DefineObject(object,properties)</p>
+<p id="e2">Depict.DefineObject takes two aruguments.</br>
+</p>
+<div id="e3">
+<pre class="prettyprint"><code>
+
+var Rectangle=Depict.DefinObject("RectangleObject",{
+
+    x:10,
+    y:10,
+    width:100,
+    height:100,
+    fill:"blue",
+    transprancy:1,
+  })
+
+var Circle=Depict.DefinObject("CircleObject",{
+
+    x:10,
+    y:10,
+    width:100,
+    height:100,
+    fill:"blue",
+    transprancy:1,
+  })
+
+<code></pre></div>
+<p id="e2">
+Property argument has to be defined as a object.
+It takes 5 parameters.</br>
+Now objects are created.</p>
+<hr></hr>
+</br>
+<p id="e1">object.draw()</p>
+<p id="e2">When the draw() method is called, the object will appear.</p>
+<div id="e3"><pre class="prettyprint"><code>
+Rectangle.draw();
+Circle.draw();
+
+<code></pre></div>
+<a href="./Howto\Draw.html">Try</a>
+<hr></hr>
+</br>
+</br>
+<p id="e1">object.migrate(x,y,speed,function)</p>
+<p id="e2">object.migrate() is a method for moving objects.You can define the
+coordinates,speed and a function executes after the migration is compleated.
+(You don't have to define the function)</p>
+<div id="e3"><pre class="prettyprint"><code>
+Rectangle.migrate(300,300,1000,function(){
+  alert("Migrated")
+});
+Circle.migrate(400,400,1000,function(){
+  alert("Migrated")
+});
+<code></pre></div>
+<a href="./Howto\Migrate.html">Try</a>
+<hr></hr>
+</br>
+</br>
+<p id="e1">object.fadeIn(speed)</br>
+object.fadeOut(speed)
+</p>
+
+<p id="e2">When you use object.fadeIn(),you dont have to call the object.draw() method.</p>
+<div id="e3"><pre class="prettyprint"><code>
+Rectangle.fadeIn(1000);
+Circle.fadeOut(1000);
+<code></pre></div>
+<a href="./Howto\Fade.html">Try</a>
+</br>
+</br>
+<hr></hr>
+<p id="e1">Depict.addCollisionObserve(object1,object2,function)</p>
+<p id="e2">Depict.addCollisionObserve() method executes the function given by the argument,
+when two specified objects collide.
+</p>
+<div id="e3"><pre class="prettyprint"><code>
+Depict.addcollisionObserve(Rectangel,Circle,function(){
+  console.log("HIT")
+})
+<code></pre></div>
+<a href="./Howto\Collide.html">Try</a>
+</br>
+</br>
+<hr></hr>
+<p id="e1">Depict.clearAll()</p>
+<p id="e2">Depict.clearAll() method clears all objects.</p>
+</br>
+<hr></hr>
+<p id="e2">Plannig to add more mothods,
+and I'll try my best to make the library better.</br>
+If you have things to ask, or anythig relevent to javascript,
+give me a message. </br>
+Depict.js@gmail.com
+
+</p>
+
+</body>
+<script type="text/javascript" src="./src/run_prettify.js"></script>
+
+</html>
