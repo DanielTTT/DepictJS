@@ -1,291 +1,535 @@
+var Depict=(function(){
 
 
-Depict=(function(){
+  Object.prototype.Canvas=function(prop){
 
-canvas=document.createElement("canvas");
-canvas.width=600;
-canvas.height=600;
-var body=document.getElementsByTagName("body").item(0);
-var ctx=canvas.getContext("2d")
-body.appendChild(canvas);
+    var body=document.getElementsByTagName("body").item(0);
+    var canvas=document.createElement("canvas");
+    var canvasContainer=document.createElement("div");
+    var ctx=canvas.getContext("2d");
+    var self=this;
+
+    canvas.width=prop.width;
+    canvas.height=prop.height;
+    canvasContainer.align="center"
+    canvasContainer.width=canvas.width;
+    canvasContainer.height=canvas.height;
+    body.appendChild(canvasContainer);
+    canvasContainer.appendChild(canvas);
+
+    Object.defineProperty(this,"canvas",{
+      writable:true,
+      value:canvas
+    })
+
+    Object.Canvas.prototype.instances=[]
 
 
+    Object.defineProperty(this,"setter",{
+      set:function(instance){
+        Object.Canvas.prototype.instances.push(instance)
+      }
+    })
 
-
-function _clearAll(){
-
-  ctx.clearRect(0,0,canvas.width,canvas.width);
-  Observer.execute.splice(0,Observer.length);
-  Objects.obj.splice(0,Objects.obj.length);
-
-}
-
-var Observer={
-
-  execute:[],
-  wait:[],
-  get ob(){return this.execute},
-
-  set ob(result){
-    this.execute.push(result);
-    this.begin();
-  },
-
-  begin(){
-    var exe=this.ob;
-    var wait=Observer.wait;
     setInterval(function(){
-    for(var i=0; i<exe.length; i++){
 
-      if(exe[i]()!=false){
-        if(exe.includes(exe[i])){
-          var append=exe[i];
-          exe[i]()();
-          exe.splice(exe[i],1);
-          wait.push(append)
-          }
-        }
+      ctx.clearRect(0,0,canvas.width,canvas.height)
+
+      for(var i=0; i<self.instances.length; i++){
+        self.instances[i].draw()
       }
-    for(var i=0; i<wait.length; i++){
-      if(wait[i]()===false){
-        Observer.execute.push(wait[i]);
-        wait.splice(wait[i],1)
-      };
+
+  },10)
+
+}
+
+
+
+
+  Object.prototype.Circle=function(prop){
+
+    prop.width=prop.radius
+    prop.height=prop.radius
+
+    Object.defineProperty(this,"prop",{
+      writable:true,
+      value:prop
+    })
+
+
+
+  }
+
+  Object.prototype.Rectangle=function(prop){
+
+    Object.defineProperty(this,"prop",{
+      writable:true,
+      value:prop
+    })
+
+  }
+
+  Object.prototype.Line=function(prop){
+
+    Object.defineProperty(this,"prop",{
+      writable:true,
+      value:prop
+    })
+  }
+
+  Object.prototype.Figure=function(prop){
+
+    Object.defineProperty(this,"prop",{
+      writable:true,
+      value:prop
+    })
+
+  }
+
+  Object.prototype.Text=function(prop){
+
+    prop.width=prop.fontSize/2;
+    prop.height=prop.fontSize/2;
+
+    Object.defineProperty(this,"prop",{
+      writable:true,
+      value:prop
+    })
+
+  }
+
+  Object.prototype.Text.prototype.draw=function(canvas){
+
+    if(!this.canvas)this.canvas=canvas;
+    if(canvas)canvas.setter=this;
+    var ctx=this.canvas.canvas.getContext("2d");
+    var prop=this.prop
+
+    ctx.beginPath();
+    ctx.fillStyle=prop.fill;
+    ctx.lineWidth=prop.strokeWidth;
+    ctx.strokeStyle=prop.stroke;
+    ctx.shadowBlur=prop.shadowBlur;
+    ctx.shadowColor=prop.shadow
+    ctx.shadowOffsetX=prop.shadowX;
+    ctx.shadowOffsetY=prop.shadowY;
+    ctx.globalAlpha=prop.transprancy;
+    ctx.font=prop.fontSize+"px "+prop.font;
+    ctx.textAlign="center";
+    ctx.textBaseline="center";
+    ctx.fillText(prop.text,prop.x,prop.y,prop.maximum);
+  }
+
+  Object.prototype.Figure.prototype.draw=function(canvas){
+
+    if(!this.canvas)this.canvas=canvas;
+    if(canvas)canvas.setter=this;
+    var ctx=this.canvas.canvas.getContext("2d");
+    var prop=this.prop
+
+    ctx.beginPath();
+    ctx.moveTo(prop.x[0],prop.y[0]);
+    for(var i in prop.x){
+      ctx.lineTo(prop.x[i],prop.y[i]);
     }
 
+    ctx.closePath();
+    ctx.strokeStyle=prop.stroke;
+    ctx.fillStyle=prop.fill;
+    ctx.shadowBlur=prop.shadowBlur;
+    ctx.shadowColor=prop.shadow;
+    ctx.shadowOffsetX=prop.shadowX;
+    ctx.shadowOffsetY=prop.shadowY;
+    ctx.lineJoin=prop.lineJoin;
+    ctx.globalAlpha=prop.transprancy;
+    ctx.fill();
+    ctx.stroke();
+  }
+
+  Object.prototype.Line.prototype.draw=function(canvas){
+
+    if(!this.canvas)this.canvas=canvas;
+    //if the object is not in instances it pushes in.
+    if(canvas)canvas.setter=this;
+    var ctx=this.canvas.canvas.getContext("2d");
+    var prop=this.prop
+
+    ctx.beginPath();
+    ctx.lineCap=prop.cap;
+    ctx.strokeStyle=prop.fill;
+    ctx.miterLimit=prop.limit;
+    ctx.shadowBlur=prop.shadowBlur;
+    ctx.shadowColor=prop.shadow;
+    ctx.shadowOffsetX=prop.shadowX;
+    ctx.shadowOffsetY=prop.shadowY;
+    ctx.globalAlpha=prop.transprancy;
+    ctx.moveTo(prop.x[0],prop.y[0]);
+    ctx.lineTo(prop.x[1],prop.y[1]);
+    ctx.stroke();
+
+  }
+
+  Object.prototype.Circle.prototype.draw=function(canvas){
+
+    if(!this.canvas)this.canvas=canvas;
+    if(canvas)canvas.setter=this;
+    var ctx=this.canvas.canvas.getContext("2d");
+    var prop=this.prop
+    this.width=this.radius;
+
+    ctx.beginPath();
+    ctx.fillStyle=prop.fill;
+    ctx.lineWidth=prop.strokeWidth;
+    ctx.strokeStyle=prop.stroke;
+    ctx.shadowBlur=prop.shadowBlur;
+    ctx.shadowColor=prop.shadow
+    ctx.shadowOffsetX=prop.shadowX;
+    ctx.shadowOffsetY=prop.shadowY;
+    ctx.globalAlpha=prop.transprancy;
+    ctx.arc(prop.x,prop.y,prop.width,0,360);
+    ctx.fill();
+    ctx.stroke();
+    ctx.closePath()
+}
+
+  Object.prototype.Rectangle.prototype.draw=function(canvas){
+
+    if(!this.canvas)this.canvas=canvas;
+    if(canvas)canvas.setter=this;
+    var ctx=this.canvas.canvas.getContext("2d");
+    var prop=this.prop
+
+    ctx.beginPath();
+    ctx.fillStyle=prop.fill;
+    ctx.lineWidth=prop.strokeWidth;
+    ctx.strokeStyle=prop.stroke;
+    ctx.shadowBlur=prop.shadowBlur;
+    ctx.shadowColor=prop.shadow;
+    ctx.shadowOffsetX=prop.shadowX;
+    ctx.shadowOffsetY=prop.shadowY
+    ctx.globalAlpha=prop.transprancy;
+    ctx.rect(prop.x-prop.width/2,prop.y-prop.height/2,prop.width,prop.height);
+    ctx.fill()
+    ctx.stroke();
+    ctx.closePath()
+}
+
+
+var objectgroup=[Line,Rectangle,Circle,Figure,Text]
+
+for(var i in objectgroup){
+
+
+  if(objectgroup[i]!=Figure && objectgroup[i]!=Line){
+
+  objectgroup[i].prototype.migrate=function(x,y,speed,fn){
+    var prop=this.prop;
+    var self=this;
+    if(!lengthX){
+      var lengthY=y-prop.y;
+      var lengthX=x-prop.x;
+  }
+
+    var interval=setInterval(function(){
+
+      prop.x+=lengthX/speed*10;
+      prop.y+=lengthY/speed*10;
+
+      if(Math.abs(x-prop.x)<1 && Math.abs(y-prop.y)<1){
+        Math.ceil(prop.y);
+        Math.ceil(prop.x);
+        if(typeof fn==="function" &&
+      self.canvas.instances.includes(self)){
+          fn();
+        }
+
+        clearInterval(interval);
+
+      }
+
+    },1)
+  }
+
+}else{
+
+  objectgroup[i].prototype.migrate=function(x,y,speed,fn){
+    var prop=this.prop;
+
+    if(!lengthX){
+      var lengthX=x-prop.x[0];
+      var lengthY=y-prop.y[0];
+    }
+
+    var interval=setInterval(function(){
+
+      for(var i in prop.x){
+
+        prop.x[i]+=lengthX/speed*10;
+        prop.y[i]+=lengthY/speed*10;
+
+      }
+
+      if(Math.abs(x-prop.x[0])<1 && Math.abs(y-prop.y[0])<1){
+
+        fn();
+        clearInterval(interval);
+        }
+
+      },1)
+
+    }
+  }
+
+  objectgroup[i].prototype.remove=function(canvas){
+    canvas.instances.splice(canvas.instances.indexOf(this),1);
+
+  }
+
+
+  objectgroup[i].prototype.fadeIn=function(canvas,speed){
+
+      var prop=this.prop;
+      this.prop.transprancy=0;
+      this.draw(canvas)
+      var interval=setInterval(function(){
+
+        if(prop.transprancy<1){
+
+          prop.transprancy+=10/speed;
+
+      }else{
+
+        prop.transprancy=1;
+        clearInterval(interval)
+      }
+
+    },1)
+
+  }
+
+  objectgroup[i].prototype.fadeOut=function(canvas,speed){
+
+    var prop=this.prop;
+    var self=this;
+    if(!prop.transprancy)prop.transprancy=1
+
+    if(!fadeout){
+      var fadeout=prop.transprancy/speed
+    }
+    var interval=setInterval(function(){
+
+      if(prop.transprancy>0.1){
+
+        prop.transprancy-=fadeout*10;
+
+      }else{
+        self.remove(canvas)
+        clearInterval(interval)
+    }
 
   },1)
   }
 
-}
-
-var ObjectGroup={
-
-  "RectangleObject":Rectangle,
-  "CircleObject":Circle,
-
-}
-
-var Objects={
-
-  group:[],
-  get obj(){return this.group},
-  set  obj(obj){
-    this.group.push(obj);
-
-  }
-}
-
-
-
-setInterval(function(){
-  ctx.clearRect(0,0,window.innerWidth,window.innerHeight)
-
-  for(var i=0; i<Objects.obj.length; i++){
-    Objects.obj[i].draw();
-  }
-
-
-},10)
-
-
-
-
-
-function _addColliedeOberve(object1,object2,func){
-
-  var obj_1=object1.prop;
-  var obj_2=object2.prop;
-
-
-  if(object1.name===object2.name){
-      if(obj_1.name==="Rectangle"){
-        Observer.ob=function(){
-          if(Math.abs(obj_1.x-obj_2.x)<obj_1.width/2+obj_2.width/2 &&
-            Math.abs(obj_1.y-obj_2.y)<obj_1.height/2+obj_2.height/2
-          ){return func }else{return false}
-        };
-      }else{
-        Observer.ob=function(){
-          if(Math.abs(obj_1.x-obj_2.x)<obj_1.radius+obj_2.radius &&
-          Math.abs(obj_1.y-obj_2.y)<obj_1.radius+obj_2.radius
-        ){return func }else{return false}
-        }
-      }
-      }else{
-        if(object1.name==="Rectangle"){
-          Observer.ob=function(){
-            if(Math.abs(obj_1.x+Math.abs(obj_1.width/2)-obj_2.x)<obj_2.radius+obj_1.width/2 &&
-            Math.abs(obj_1.y+Math.abs(obj_1.height/2)-obj_2.y)<obj_2.radius+obj_1.height/2
-          ){return func }else{return false}
-          }
-        }else{
-          Observer.ob=function(){
-          if(Math.abs(Math.abs(obj_2.width/2)+obj_2.x-obj_1.x)<obj_1.radius+obj_2.width/2 &&
-          Math.abs(Math.abs(obj_2.height/2)+obj_2.y-obj_1.y)<obj_1.radius+obj_2.height/2
-      ){return func }else{return false}
-
-          }
-        }
-      }
-}
-
-
-
-function _DefineObject(Obj,prop){
-
-  var Type=ObjectGroup[Obj];
-  var obj=new Type(prop);
-  if(!obj.prop.transprancy){
-    obj.prop.transprancy=1;
-  }
-
-  return obj
-}
-
-
-var TypeGroup=[Rectangle,Circle]
-
-function Rectangle(prop){
-
-  this.name="Rectangle";
-  this.prop=prop;
-
-}
-
-function Circle(prop){
-
-  this.name="Circle";
-  this.prop=prop
-
-}
-
-
-
-for(var i in TypeGroup){
-
-  TypeGroup[i].prototype.fadeOut=function(speed){
+  objectgroup[i].prototype.observeCollision=function(object2,fn){
 
     var self=this;
+    var prop1=this.prop;
+    var prop2=object2.prop;
 
-    var id=setInterval(function(){
-
-      if(self.prop.transprancy>0.1){
-        self.prop.transprancy-=self.prop.transprancy*10/speed;
+    var prop1X=function(){
+      if(typeof prop1.x==="object"){
+        // for lines
+        return Math.abs(prop1.x[0]-prop1.width/2);
       }else{
-      Objects.obj.splice(Objects.obj.indexOf(self),1)
-      clearInterval(id)
+        return prop1.x;
+      }
     }
 
-  },1)
+    var prop1Y=function(){
+      if(typeof prop1.y==="object"){
+        // for lines
+        return Math.abs(prop1.y[0]-prop1.height/2);
+      }else{
+        return  prop1.y;
+      }
+    }
 
-}
+    var prop2X=function(){
+      if(typeof prop2.x==="object"){
+        // for lines
+        return Math.abs(prop2.x[0]-prop2.width/2);
+      }else{
+        return prop2.x;
+      }
+    }
+
+    var prop2Y=function(){
+      if(typeof prop2.y==="object"){
+        // for lines
+        return Math.abs(prop2.y[0]-prop2.height/2);
+      }else{
+        return prop2.y;
+      }
+    }
 
 
-  TypeGroup[i].prototype.fadeIn=function(speed){
 
-    var self=this;
-    this.prop.transprancy=0;
-    Objects.obj=self;
+    interval1()
+      function interval1(){
 
-    var id=setInterval(function(){
-      if(self.prop.transprancy<1){
-        self.prop.transprancy+=10/speed;
+        var interval1=setInterval(function(){
 
+          var p1x=prop1X();
+          var p2x=prop2X();
+          var p1y=prop1Y();
+          var p2y=prop2Y();
+
+          if(Math.abs(p1x-p2x)>prop1.width/2+prop2.width/2 ||
+              Math.abs(p1y-p2y)>prop1.height/2+prop2.height/2
+            ){
+              interval2()
+              clearInterval(interval1)
+            }
+          },1)
+        }
+
+    function interval2(){
+
+      var interval=setInterval(function(){
+
+        var p1x=prop1X();
+        var p2x=prop2X();
+        var p1y=prop1Y();
+        var p2y=prop2Y();
+
+       if(Math.abs(p1x-p2x)<prop1.width/2+prop2.width/2){
+          if(Math.abs(p1y-p2y)<prop1.height/2+prop2.height/2){
+
+            if(self.canvas.instances.includes(self) &&
+            self.canvas.instances.includes(object2)
+          )fn();
+          interval1()
+          clearInterval(interval)
+
+          }
+        }
+      },1)
+      }
+    }
+
+    objectgroup[i].prototype.scale=function(w,h,speed){
+
+      var self=this;
+      if(!this.prop.fontSize){
+
+    var scaleW=w-this.prop.width;
+    var scaleH=h-this.prop.height;
+
+    var interval2=setInterval(function(){
+      if(Math.abs(w-self.prop.width)>1 && Math.abs(h-self.prop.height)>1){
+      self.prop.width+=scaleW/speed*10;
+      self.prop.height+=scaleH/speed*10;
+      self.prop.radius+=scaleW/speed*10;
     }else{
-      self.prop.transprancy=1;
-      clearInterval(id);
 
+      clearInterval(interval2)
     }
   },1)
 
-}
-
-  TypeGroup[i].prototype.migrate=function(x,y,speed,func){
-
-      var prop=this.prop
-      var len={
-        lengthX:x-prop.x,
-        lengthY:y-prop.y
-      };
-
-      var id=setInterval(function(){
-
-        prop.x+=len.lengthX/speed*10;
-        prop.y+=len.lengthY/speed*10;
-
-        if(Math.abs(x-prop.x)<1 && Math.abs(y-prop.y)<1){
-          Math.ceil(prop.x);
-          Math.ceil(prop.y);
-          if(typeof func==="function")func();
-          clearInterval(id)
-        }
-
-      },10)
-
-  }
-
-}
-
-
-Rectangle.prototype.draw=function(){
-
-
-    if(!Objects.obj.includes(this))Objects.obj=this;
-    var text=this.prop.text;
-    var prop=this.prop;
-
-    ctx.beginPath();
-    ctx.rect(prop.x,prop.y,prop.width,prop.height);
-    ctx.fillStyle=prop.fill;
-    ctx.strokeStyle=prop.stroke;
-    ctx.globalAlpha=prop.transprancy;
-    ctx.fill();
-    ctx.closePath();
-
-    if(text){
-    ctx.beginPath();
-    ctx.fillStyle=text.fill;
-    ctx.textAlign="center";
-    ctx.textBaseline="center";
-    ctx.font=(prop.width/2+prop.height/2)/2+"px "+"MS-Gothic"
-    ctx.fillText(text.value,prop.x+prop.width/2,prop.y+prop.height*0.75,prop.width);
-    ctx.closePath();
+  }else{
+    var scale=w-this.prop.radius
+    var interval3=setInterval(function(){
+      if(Math.abs(w-self.prop.fontSize)>1){
+      self.prop.fontSize+=scale/speed*10;
+    }else{
+      clearInterval(interval3)
     }
+    },1)
+  }
+    }
+
+    var observeCollision=function(e,fn,self){
+
+      var rect=e.target.getBoundingClientRect();
+      var x=e.clientX-rect.left;
+      var y=e.clientY-rect.top;
+      if(Math.abs(self.prop.x-x)<self.prop.width/2 &&
+          Math.abs(self.prop.y-y)<self.prop.height/2){
+            if(typeof fn==="function")fn()
+          }
+      }
+
+    var observeCollision2=function(e,fn,self){
+
+      var rect=e.target.getBoundingClientRect();
+      var x=e.clientX-rect.left;
+      var y=e.clientY-rect.top;
+      if(Math.abs(self.prop.x-x)>self.prop.width/2 ||
+          Math.abs(self.prop.y-y)>self.prop.height/2){
+            if(typeof fn==="function")fn()
+          }
+    }
+
+    objectgroup[i].prototype.onclick=function(fn){
+
+      var canvas=this.canvas.canvas;
+      var self=this;
+
+      //execute function when the object is clicked
+      canvas.addEventListener("click",function(e){
+        //check if the "clearAll" method is not called.
+        if(self.canvas.instances.includes(self)){
+        observeCollision(e,fn,self)
+      }
+      })
+    }
+
+    objectgroup[i].prototype.mouseover=function(fn){
+
+      var canvas=this.canvas.canvas;
+      var self=this;
+
+      //execute function when mousemove is called.
+      canvas.addEventListener("mousemove",function(e){
+        //check if the "clearAll" method is not called.
+        if(self.canvas.instances.includes(self)){
+        observeCollision(e,fn,self)
+      }
+      })
+    }
+
+    objectgroup[i].prototype.mouseout=function(fn){
+
+      var canvas=this.canvas.canvas;
+      var self=this;
+
+      //execute function when mousemove is called.
+      canvas.addEventListener("mousemove",function(e){
+        //check if the "clearAll" method is not called.
+        if(self.canvas.instances.includes(self)){
+        observeCollision2(e,fn,self)
+      }
+      })
+    }
+}
+
+
+  function _CreateElement(element,prop){
+
+    var instance=new Object[element](prop);
+    return instance;
+
   }
 
-Circle.prototype.draw=function(){
+  function _clearAll(Canvas){
+    Canvas.instances.splice(0,Canvas.instances.length);
 
-  if(!Objects.obj.includes(this))Objects.obj=this;
+    }
 
-    var text=this.prop.text;
-    var prop=this.prop;
+return{
 
-    ctx.beginPath();
-    ctx.arc(prop.x,prop.y,prop.radius,0,360);
-    ctx.fillStyle=prop.fill;
-    ctx.strokeStyle=prop.stroke;
-    ctx.globalAlpha=prop.transprancy;
-    ctx.fill();
-    ctx.closePath();
-
-    if(text){
-    ctx.beginPath();
-    ctx.fillStyle=text.fill;
-    ctx.textAlign="center";
-    ctx.textBaseline="center";
-    ctx.font=prop.radius+"px "+"MS-Gothic"
-    ctx.fillText(text.value,prop.x,prop.y+prop.radius/2,prop.radius);
-    ctx.closePath();
-  }
-  }
-
-
-
-return {
-  DefineObject:_DefineObject,
-  addCollisionObserve:_addColliedeOberve,
-  clearAll:_clearAll,
+  CreateElement:_CreateElement,
+  clearAll:_clearAll
 }
 
 }())
