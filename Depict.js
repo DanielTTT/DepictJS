@@ -1,4 +1,4 @@
-var Depict=(function(){
+Depict=(function(){
 
 
   Object.prototype.Canvas=function(prop){
@@ -11,6 +11,7 @@ var Depict=(function(){
 
     canvas.width=prop.width;
     canvas.height=prop.height;
+    canvas.style.border=prop.border+"px solid";
     canvasContainer.align="center"
     canvasContainer.width=canvas.width;
     canvasContainer.height=canvas.height;
@@ -43,9 +44,6 @@ var Depict=(function(){
 
 }
 
-
-
-
   Object.prototype.Circle=function(prop){
 
     prop.width=prop.radius
@@ -71,20 +69,18 @@ var Depict=(function(){
 
   Object.prototype.Line=function(prop){
 
-    Object.defineProperty(this,"prop",{
-      writable:true,
-      value:prop
-    })
-  }
+      prop.width=Math.abs(prop.x[1]-prop.x[0])*2;
+      prop.height=Math.abs(prop.y[1]-prop.y[0])*2;
 
-  Object.prototype.Figure=function(prop){
 
     Object.defineProperty(this,"prop",{
       writable:true,
       value:prop
     })
 
+
   }
+
 
   Object.prototype.Text=function(prop){
 
@@ -117,34 +113,9 @@ var Depict=(function(){
     ctx.font=prop.fontSize+"px "+prop.font;
     ctx.textAlign="center";
     ctx.textBaseline="center";
-    ctx.fillText(prop.text,prop.x,prop.y,prop.maximum);
+    ctx.fillText(prop.text,prop.x,prop.y,prop.limit);
   }
 
-  Object.prototype.Figure.prototype.draw=function(canvas){
-
-    if(!this.canvas)this.canvas=canvas;
-    if(canvas)canvas.setter=this;
-    var ctx=this.canvas.canvas.getContext("2d");
-    var prop=this.prop
-
-    ctx.beginPath();
-    ctx.moveTo(prop.x[0],prop.y[0]);
-    for(var i in prop.x){
-      ctx.lineTo(prop.x[i],prop.y[i]);
-    }
-
-    ctx.closePath();
-    ctx.strokeStyle=prop.stroke;
-    ctx.fillStyle=prop.fill;
-    ctx.shadowBlur=prop.shadowBlur;
-    ctx.shadowColor=prop.shadow;
-    ctx.shadowOffsetX=prop.shadowX;
-    ctx.shadowOffsetY=prop.shadowY;
-    ctx.lineJoin=prop.lineJoin;
-    ctx.globalAlpha=prop.transprancy;
-    ctx.fill();
-    ctx.stroke();
-  }
 
   Object.prototype.Line.prototype.draw=function(canvas){
 
@@ -215,13 +186,13 @@ var Depict=(function(){
 }
 
 
-var objectgroup=[Line,Rectangle,Circle,Figure,Text]
+var objectgroup=[Line,Rectangle,Circle,Text]
 
 for(var i in objectgroup){
 
 
-  if(objectgroup[i]!=Figure && objectgroup[i]!=Line){
-
+  if(objectgroup[i]!=Line){
+    //for Rectangle,Circle,Text
   objectgroup[i].prototype.migrate=function(x,y,speed,fn){
     var prop=this.prop;
     var self=this;
@@ -251,6 +222,7 @@ for(var i in objectgroup){
   }
 
 }else{
+  //for Line
 
   objectgroup[i].prototype.migrate=function(x,y,speed,fn){
     var prop=this.prop;
@@ -281,6 +253,7 @@ for(var i in objectgroup){
   }
 
   objectgroup[i].prototype.remove=function(canvas){
+    //clears all objects drawn in the canvas
     canvas.instances.splice(canvas.instances.indexOf(this),1);
 
   }
@@ -339,7 +312,7 @@ for(var i in objectgroup){
     var prop1X=function(){
       if(typeof prop1.x==="object"){
         // for lines
-        return Math.abs(prop1.x[0]-prop1.width/2);
+        return Math.abs(prop1.x[0]-prop1.width);
       }else{
         return prop1.x;
       }
@@ -348,7 +321,7 @@ for(var i in objectgroup){
     var prop1Y=function(){
       if(typeof prop1.y==="object"){
         // for lines
-        return Math.abs(prop1.y[0]-prop1.height/2);
+        return Math.abs(prop1.y[0]-prop1.height);
       }else{
         return  prop1.y;
       }
@@ -357,7 +330,7 @@ for(var i in objectgroup){
     var prop2X=function(){
       if(typeof prop2.x==="object"){
         // for lines
-        return Math.abs(prop2.x[0]-prop2.width/2);
+        return Math.abs(prop2.x[0]-prop2.width);
       }else{
         return prop2.x;
       }
@@ -366,7 +339,7 @@ for(var i in objectgroup){
     var prop2Y=function(){
       if(typeof prop2.y==="object"){
         // for lines
-        return Math.abs(prop2.y[0]-prop2.height/2);
+        return Math.abs(prop2.y[0]-prop2.height);
       }else{
         return prop2.y;
       }
@@ -402,9 +375,10 @@ for(var i in objectgroup){
         var p1y=prop1Y();
         var p2y=prop2Y();
 
+
        if(Math.abs(p1x-p2x)<prop1.width/2+prop2.width/2){
           if(Math.abs(p1y-p2y)<prop1.height/2+prop2.height/2){
-
+            //if "clearAll()" method is called do not call fn().
             if(self.canvas.instances.includes(self) &&
             self.canvas.instances.includes(object2)
           )fn();
@@ -425,24 +399,25 @@ for(var i in objectgroup){
     var scaleW=w-this.prop.width;
     var scaleH=h-this.prop.height;
 
-    var interval2=setInterval(function(){
-      if(Math.abs(w-self.prop.width)>1 && Math.abs(h-self.prop.height)>1){
+
+    var interval1=setInterval(function(){
+      if(Math.abs(w-self.prop.width)>1 || Math.abs(h-self.prop.height)>1){
       self.prop.width+=scaleW/speed*10;
       self.prop.height+=scaleH/speed*10;
       self.prop.radius+=scaleW/speed*10;
     }else{
 
-      clearInterval(interval2)
+      clearInterval(interval1)
     }
   },1)
 
   }else{
     var scale=w-this.prop.radius
-    var interval3=setInterval(function(){
+    var interval2=setInterval(function(){
       if(Math.abs(w-self.prop.fontSize)>1){
       self.prop.fontSize+=scale/speed*10;
     }else{
-      clearInterval(interval3)
+      clearInterval(interval2)
     }
     },1)
   }
@@ -453,9 +428,10 @@ for(var i in objectgroup){
       var rect=e.target.getBoundingClientRect();
       var x=e.clientX-rect.left;
       var y=e.clientY-rect.top;
+
       if(Math.abs(self.prop.x-x)<self.prop.width/2 &&
           Math.abs(self.prop.y-y)<self.prop.height/2){
-            if(typeof fn==="function")fn()
+            if(typeof fn==="function")fn();
           }
       }
 
@@ -493,7 +469,7 @@ for(var i in objectgroup){
       canvas.addEventListener("mousemove",function(e){
         //check if the "clearAll" method is not called.
         if(self.canvas.instances.includes(self)){
-        observeCollision(e,fn,self)
+        observeCollision(e,fn,self);
       }
       })
     }
