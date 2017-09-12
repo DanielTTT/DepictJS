@@ -1,5 +1,4 @@
 
-
 Depict=(function(){
 
   Object.prototype.Canvas=function(prop){
@@ -93,9 +92,9 @@ Depict=(function(){
 
   Object.prototype.Line=function(prop){
 
-      prop.width=Math.abs(prop.x[1]-prop.x[0])*2;
-      prop.height=Math.abs(prop.y[1]-prop.y[0])*2;
-
+      prop.width=Math.abs(prop.x[1]-prop.x[0])!=0 || 1;
+      prop.height=Math.abs(prop.y[1]-prop.y[0]);
+      
 
     Object.defineProperty(this,"prop",{
       writable:true,
@@ -236,9 +235,10 @@ Depict=(function(){
 }
 
 
+var objectgroup=[Circle,Rectangle,Text,Line,Image]
 
-
-    //for Rectangle,Circle,Text
+for(var i in objectgroup){
+  //for Line
   Object.prototype.migrate=function(x,y,speed,fn){
     var prop=this.prop;
     var self=this;
@@ -274,7 +274,7 @@ Depict=(function(){
 
       },1)
     }else{
-
+      //for other objects.
     if(!lengthX){
       var lengthY=y-prop.y;
       var lengthX=x-prop.x;
@@ -423,7 +423,6 @@ Depict=(function(){
         var p1y=prop1Y();
         var p2y=prop2Y();
 
-
        if(Math.abs(p1x-p2x)<prop1.width/2+prop2.width/2){
           if(Math.abs(p1y-p2y)<prop1.height/2+prop2.height/2){
             //if "clearAll()" method is called do not call fn().
@@ -435,7 +434,7 @@ Depict=(function(){
 
           }
         }
-      },1)
+      },100)
       }
     }
 
@@ -535,7 +534,7 @@ Depict=(function(){
       }
       })
 }
-
+}
   function _CreateElement(element,prop){
 
     var instance=new Object[element](prop);
